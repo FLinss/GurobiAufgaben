@@ -54,15 +54,17 @@ m.optimize()
 m.printAttr('ObjVal')
 m.printAttr('X')
 
+names = ["Anna", "Berti", "Carl", "Dieter", "Emil", "Franz", "Gerd", "Hanna", "Ilse"]
+
 print("\nSitzverteilung\n")
 for person in persons:
     for desk in desks:
         if x[person, desk].X > 0:
-            print("Person", person, "sitzt am Tisch", desk)
+            print(names[person], "sitzt am Tisch", desk)
 
 for desk in desks:
     print("\nPersonen am Tisch", desk)
     for person1 in range(numberOfPersons-1):
         for person2 in range(person1+1, numberOfPersons):
             if x[person1, desk].X * x[person2, desk].X > 0:
-                print("Person", person1, "und Person", person2, "haben den Sympathiewert:", sympathy[person1][person2])
+                print(names[person1], "und", names[person2], "haben den Sympathiewert:", sympathy[person1][person2])
