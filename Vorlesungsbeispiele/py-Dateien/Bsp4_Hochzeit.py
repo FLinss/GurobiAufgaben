@@ -11,7 +11,15 @@ persons = range(numberOfPersons)
 
 #### Parameter ####
 
-sympathy = [[0, 6, 4, 10, 1, 2, 6, 2, 4],
+sympathy=[]
+with open("Bsp4_SympathieWerte.csv", encoding="utf-8") as csv_file:
+    csv_reader = csv.reader(csv_file)
+    header = next(csv_reader)
+    for row in csv_reader:
+        rowAsInt = [int(item) for item in row[1:]]
+        sympathy.append(rowAsInt)
+
+'''sympathy = [[0, 6, 4, 10, 1, 2, 6, 2, 4],
             [6, 0, 7, 3, 6, 1, 5, 10, 5],
             [4, 7, 0, 10, 6, 3, 10, 1, 4],
             [10, 3, 10, 0, 4, 6, 9, 6, 10],
@@ -19,7 +27,7 @@ sympathy = [[0, 6, 4, 10, 1, 2, 6, 2, 4],
             [2, 1, 3, 6, 10, 0, 9, 7, 7],
             [6, 5, 10, 9, 1, 9, 0, 1, 9],
             [2, 10, 1, 6, 2, 7, 1, 0, 8],
-            [4, 5, 4, 10, 4, 7, 9, 8, 0]]
+            [4, 5, 4, 10, 4, 7, 9, 8, 0]]'''
 
 capacity = [4, 3, 2] 
 
