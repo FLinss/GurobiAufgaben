@@ -1,5 +1,6 @@
 import gurobipy as gp
 from gurobipy import GRB
+import csv
 
 #### Mengen ####
 
@@ -12,7 +13,7 @@ persons = range(numberOfPersons)
 #### Parameter ####
 
 sympathy=[]
-with open("Bsp4_SympathieWerte.csv", encoding="utf-8") as csv_file:
+with open("Vorlesungsbeispiele/Bsp4_SympathieWerte.csv", encoding="utf-8") as csv_file:
     csv_reader = csv.reader(csv_file)
     header = next(csv_reader)
     for row in csv_reader:
