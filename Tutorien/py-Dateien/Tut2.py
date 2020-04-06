@@ -35,7 +35,7 @@ m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] fo
 # + 320*x[1,0] + 280*x[1,1] + 490*x[1,2] + 230*x[1,3] + 120*x[1,4]
 # + 120*x[2,0] + 390*x[2,1] + 240*x[2,2] + 230*x[2,3] + 370*x[2,4], GRB.MINIMIZE)
 
-# Hinzufügen von Nebenbedingungen
+# Hinzufügen der Nebenbedingungen
 #for j in J:
 #     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "nb_"+str(j))
 m.addConstr(x[0,0] + x[1,0] + x[2,0] == 200, "nb_0")
