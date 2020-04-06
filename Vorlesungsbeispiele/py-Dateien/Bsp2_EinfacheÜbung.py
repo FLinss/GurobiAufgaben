@@ -20,5 +20,5 @@ m.addConstr(x + y == 1)
 m.optimize()
 
 # Ergebnisausgabe
-m.printAttr('X')
-m.printAttr('ObjVal')
+m.printAttr(GRB.Attr.X)
+m.printAttr(GRB.Attr.ObjVal)
