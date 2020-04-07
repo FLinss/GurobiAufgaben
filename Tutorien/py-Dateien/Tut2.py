@@ -72,3 +72,10 @@ m.optimize()
 # Ergebnisausgabe
 m.printAttr(GRB.Attr.ObjVal)
 m.printAttr(GRB.Attr.X)
+
+# 2d) Änderung des Modells:
+# for j in J:
+#      m.addConstr(gp.quicksum(x[i,j] for i in I) <= d[j], "nb_" + str(j))
+
+# g = 350
+# m.setObjective(gp.quicksum((g - c[i][j])*x[i,j] for j in J for i in I) - gp.quicksum(f[i]*y[i] for i in I), GRB.MAXIMIZE)
