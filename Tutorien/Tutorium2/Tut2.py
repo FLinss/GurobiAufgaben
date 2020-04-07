@@ -59,7 +59,7 @@ m.addConstr(x[2,0] + x[2,1] + x[2,2] + x[2,3] + x[2,4] <= 600 * y[2], "kb_2")
 #     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "nb_" + str(j))
 
 #for i in I:
-#     m.addConstr(gp.quicksum(x[i,j] for i in I) <= b[i] * y[i], "kb_" + str(j))
+#     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "kb_" + str(i))
 
 # Variante - Aufruf von model.addConstrs()
 # m.addConstrs((x.sum("*", j) == d[j] for j in J), name="nb")
