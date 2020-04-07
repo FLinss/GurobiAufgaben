@@ -136,4 +136,4 @@ dmypy.json
 *.lp
 *.log
 *.sol
-myFirstTextFile.txt
+*.txt

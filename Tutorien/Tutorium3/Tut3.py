@@ -56,6 +56,10 @@ for i in I:
           newRow.append(costperH * dur[i][j] + costPerKm * dist[i][j])
      c.append(newRow)
 
+# Ausgabe der Kosten
+for row in c:
+     print(row)
+
 # Kurzform:
 # c = [[costperH * dur[i][j] + costPerKm * dist[i][j] for j in J] for i in I]
 
@@ -94,6 +98,34 @@ for i in I:
 # Optimierung
 m.optimize()
 
-# Ergebnisausgabe
-m.printAttr(GRB.Attr.ObjVal)
-m.printAttr(GRB.Attr.X)
+# Ergebnisausgabe:
+print("\nOptimale Standortwahl bei mehreren Betriebsstätten\n")
+
+print("Die gesamten Kosten des Transportes betragen", m.getAttr(GRB.Attr.ObjVal), "GE.")
+
+for i in I:
+     if y[i].X > 0:
+          print("In", so[i], "wird ein Standort errichtet!")
+     else:
+          print("In", so[i], "wird KEIN Standort errichtet!")
+
+
+for i in I:
+     for j in J:
+          if x[i,j].X > 0:
+               print("Von", so[i], "werden", x[i,j].X, "ME nach", ao[j], "geliefert, die Transportkosten betragen dabei", c[i][j] * x[i,j].X, "GE.")
+
+with open("Ergebnisausgabe.txt", "w", encoding="utf-8") as file:
+     file.write("Optimale Standortwahl bei mehreren Betriebsstätten\n\n")
+     file.write("Die gesamten Kosten des Transportes betragen " + str(m.getAttr(GRB.Attr.ObjVal)) + " GE.\n")
+     for i in I:
+          if y[i].X > 0:
+               file.write("In " + so[i] + " wird ein Standort errichtet!\n")
+          else:
+               file.write("In " + so[i] + " wird KEIN Standort errichtet!\n")
+     file.write("\n")
+     for i in I:
+          for j in J:
+               if x[i,j].X > 0:
+                    file.write("Von " + so[i] + " werden " + str(x[i,j].X) + " ME nach " + ao[j] +
+                    " geliefert, die Transportkosten betragen dabei " + str(c[i][j] * x[i,j].X) + " GE.\n")
