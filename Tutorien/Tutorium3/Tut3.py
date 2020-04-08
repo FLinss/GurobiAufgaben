@@ -41,12 +41,14 @@ with open("Tutorien/Tutorium3/Entfernung.csv", encoding="utf-8") as csv_file:
           rowAsInt = [int(item) for item in row[1:]]
           dist.append(rowAsInt)
 
+
 # Mengen
 I_max = len(b)
 J_max = len(d)
 
 I = range(I_max)
 J = range(J_max)
+
 
 # Kostenberechnung
 c = []
@@ -56,19 +58,20 @@ for i in I:
           newRow.append(costperH * dur[i][j] + costPerKm * dist[i][j])
      c.append(newRow)
 
-# Ausgabe der Kosten
-for row in c:
-     print(row)
-
 # Kurzform:
 # c = [[costperH * dur[i][j] + costPerKm * dist[i][j] for j in J] for i in I]
 
 # Dict ist auch möglich, dann wird c mit c[i,j] indiziert anstelle von c[i][j] - Zielfunktion muss an Dict angepasst werden.
 #c = {(i,j) : costperH * dur[i][j] + costPerKm * dist[i][j] for i in I for j in J}
 
+# Ausgabe der Kosten
+for row in c:
+     print(row)
+
 
 # Initialisierung des Modells
 m = gp.Model()
+
 
 # Initialisierung der Variablen
 x = {}
@@ -81,6 +84,7 @@ for i in I:
 
 #x = m.addVars(I_max, J_max, vtype=GRB.CONTINUOUS, name="x")
 #y = m.addVars(I_max, vtype=GRB.BINARY, name="y")
+
 
 # Definition der Zielfunktion
 m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] for j in J for i in I), GRB.MINIMIZE)
@@ -95,8 +99,10 @@ for i in I:
 # m.addConstrs((x.sum("*", j) == d[j] for j in J), name="nb")
 # m.addConstrs((x.sum(i, "*") == b[i] * y[i] for i in I), name="kb")
 
+
 # Optimierung
 m.optimize()
+
 
 # Ergebnisausgabe:
 print("\nOptimale Standortwahl bei mehreren Betriebsstätten\n")
@@ -105,9 +111,9 @@ print("Die gesamten Kosten des Transportes betragen", m.getAttr(GRB.Attr.ObjVal)
 
 for i in I:
      if y[i].X > 0:
-          print("In", so[i], "wird ein Standort errichtet!")
+          print("In", so[i], "wird ein Standort errichtet.")
      else:
-          print("In", so[i], "wird KEIN Standort errichtet!")
+          print("In", so[i], "wird KEIN Standort errichtet.")
 
 
 for i in I:
