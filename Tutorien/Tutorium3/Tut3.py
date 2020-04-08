@@ -112,6 +112,8 @@ print("Die gesamten Kosten des Transportes betragen", m.getAttr(GRB.Attr.ObjVal)
 for i in I:
      if y[i].X > 0:
           print("In", so[i], "wird ein Standort errichtet.")
+          print("Fixkosten:", f[i])
+          print("Variable Kosten:", sum([c[i][j] * x[i,j].X for j in J]))
      else:
           print("In", so[i], "wird KEIN Standort errichtet.")
 
