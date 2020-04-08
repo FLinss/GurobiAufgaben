@@ -8,7 +8,7 @@ costperH = 45
 
 d=[]
 ao=[]
-with open("Tutorien/Tutorium3/Absatzorte.csv", encoding="utf-8") as csv_file:
+with open("Absatzorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           d.append(int(row["Bedarf"]))
@@ -17,7 +17,7 @@ with open("Tutorien/Tutorium3/Absatzorte.csv", encoding="utf-8") as csv_file:
 b=[]
 f=[]
 so=[]
-with open("Tutorien/Tutorium3/Standorte.csv", encoding="utf-8") as csv_file:
+with open("Standorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           b.append(int(row["Kapazität"]))
@@ -26,7 +26,7 @@ with open("Tutorien/Tutorium3/Standorte.csv", encoding="utf-8") as csv_file:
 
 
 dur=[]
-with open("Tutorien/Tutorium3/Dauer.csv", encoding="utf-8") as csv_file:
+with open("Dauer.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.reader(csv_file)
      next(csv_reader)
      for row in csv_reader:
@@ -34,7 +34,7 @@ with open("Tutorien/Tutorium3/Dauer.csv", encoding="utf-8") as csv_file:
           dur.append(rowAsInt)
 
 dist=[]
-with open("Tutorien/Tutorium3/Entfernung.csv", encoding="utf-8") as csv_file:
+with open("Entfernung.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.reader(csv_file)
      next(csv_reader)
      for row in csv_reader:
