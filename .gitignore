@@ -136,4 +136,8 @@ dmypy.json
 *.lp
 *.log
 *.sol
+
+# customize
 *.txt
+*.xlsx
+Tutorien/Tutorium4/GenerateCSV.py
