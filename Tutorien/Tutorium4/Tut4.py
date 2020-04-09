@@ -41,13 +41,12 @@ c = []
 for i in I:
      newRow = []
      for j in J:
-          distance = abs(posSo[i]["X"] - posAo[j]["X"]) 
-          + abs(posSo[i]["Y"] - posAo[j]["Y"])
+          distance = abs(posSo[i]["X"] - posAo[j]["X"]) + abs(posSo[i]["Y"] - posAo[j]["Y"])
           newRow.append(costPerKm * distance)
      c.append(newRow)
 
 # Kurzform:
-# c = [[(costPerKm * abs(posSo[i]["X"] - posAo[j]["X"]) + abs(posSo[i]["Y"] - posAo[j]["Y"])) for j in J] for i in I]
+#c = [[costPerKm * (abs(posSo[i]["X"] - posAo[j]["X"]) + abs(posSo[i]["Y"] - posAo[j]["Y"])) for j in J] for i in I]
 
 # Ausgabe der Kosten
 for row in c:
@@ -96,8 +95,8 @@ print("Die gesamten Kosten des Transportes betragen", m.getAttr(GRB.Attr.ObjVal)
 for i in I:
      if y[i].X > 0:
           print("In", so[i], "wird ein Standort errichtet.")
-          print("Fixkosten:", f[i])
-          print("Variable Kosten:", sum([c[i][j] * x[i,j].X for j in J]))
+          print("\tFixkosten:", f[i])
+          print("\tVariable Kosten:", sum([c[i][j] * x[i,j].X for j in J]))
      else:
           print("In", so[i], "wird KEIN Standort errichtet.")
 
