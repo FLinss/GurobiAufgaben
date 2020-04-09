@@ -43,23 +43,23 @@ m.setObjective(60000*y[0] + 60000*y[1] + 80000*y[2]
 # m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] for j in J for i in I), GRB.MINIMIZE)
 
 # Hinzufügen der Nebenbedingungen
-m.addConstr(x[0,0] + x[1,0] + x[2,0] == 200, "nb_0")
-m.addConstr(x[0,1] + x[1,1] + x[2,1] == 250, "nb_1")
-m.addConstr(x[0,2] + x[1,2] + x[2,2] == 150, "nb_2")
-m.addConstr(x[0,3] + x[1,3] + x[2,3] == 300, "nb_3")
-m.addConstr(x[0,4] + x[1,4] + x[2,4] == 100, "nb_4")
+m.addConstr(x[0,0] + x[1,0] + x[2,0] == 200, "meet_demand_0")
+m.addConstr(x[0,1] + x[1,1] + x[2,1] == 250, "meet_demand_1")
+m.addConstr(x[0,2] + x[1,2] + x[2,2] == 150, "meet_demand_2")
+m.addConstr(x[0,3] + x[1,3] + x[2,3] == 300, "meet_demand_3")
+m.addConstr(x[0,4] + x[1,4] + x[2,4] == 100, "meet_demand_4")
 
-m.addConstr(x[0,0] + x[0,1] + x[0,2] + x[0,3] + x[0,4] <= 400 * y[0], "kb_0")
-m.addConstr(x[1,0] + x[1,1] + x[1,2] + x[1,3] + x[1,4] <= 350 * y[1], "kb_1")
-m.addConstr(x[2,0] + x[2,1] + x[2,2] + x[2,3] + x[2,4] <= 600 * y[2], "kb_2")
+m.addConstr(x[0,0] + x[0,1] + x[0,2] + x[0,3] + x[0,4] <= 400 * y[0], "meet_prod_0")
+m.addConstr(x[1,0] + x[1,1] + x[1,2] + x[1,3] + x[1,4] <= 350 * y[1], "meet_prod_1")
+m.addConstr(x[2,0] + x[2,1] + x[2,2] + x[2,3] + x[2,4] <= 600 * y[2], "meet_prod_2")
 
 # Mengenbasierte Schreibweise:
 # Variante - Wiederholter Aufruf von model.addConstr()
 #for j in J:
-#     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "nb_" + str(j))
+#     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "meet_demand_0" + str(j))
 
 #for i in I:
-#     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "kb_" + str(i))
+#     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "meet_prod_" + str(i))
 
 # Variante - Aufruf von model.addConstrs()
 # m.addConstrs((x.sum("*", j) == d[j] for j in J), name="nb")
