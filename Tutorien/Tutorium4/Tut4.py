@@ -8,7 +8,7 @@ costPerKm = 2.5
 d=[]
 ao=[]
 posAo=[]
-with open("Tutorien/Tutorium4/Absatzorte.csv", encoding="utf-8") as csv_file:
+with open("Absatzorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           d.append(int(row["Bedarf"]))
@@ -19,7 +19,7 @@ b=[]
 f=[]
 so=[]
 posSo=[]
-with open("Tutorien/Tutorium4/Standorte.csv", encoding="utf-8") as csv_file:
+with open("Standorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           b.append(int(row["Kapazität"]))
