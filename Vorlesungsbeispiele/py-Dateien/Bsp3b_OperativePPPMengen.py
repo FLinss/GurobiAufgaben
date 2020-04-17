@@ -26,7 +26,7 @@ for j in J:
 
 # Definition der Zielfunktion
 m.modelSense = GRB.MAXIMIZE
-# m.setObjective = (gp.quicksum(g[i] * x[i] for i in I),GRB.MAXIMIZE)
+#m.setObjective(gp.quicksum(g[j] * x[j] for j in J),GRB.MAXIMIZE)
 
 # Hinzufügen von Nebenbedingungen
 for i in I:
