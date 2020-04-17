@@ -27,7 +27,7 @@ m.addConstrs((x.sum(candidate, '*') == 1 for candidate in candidates), name="can
 
 m.optimize()
 
-print()
+print("\nErgebnis der Jobzuweisung:\n")
 for candidate in candidates:
     for job in jobs:
         if x[candidate, job].X > 0:
