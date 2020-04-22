@@ -1,70 +1,22 @@
 import gurobipy as gp
 from gurobipy import GRB
 
-# Parameter
-d = [200, 250, 150, 300, 100]
-b = [400, 350, 600]
-f = [60000, 60000, 80000]
-c = [[270, 170, 400, 450, 300],
-     [320, 290, 490, 230, 120],
-     [120, 390, 240, 230, 370]]
-
-# Mengen
-I_max = len(b)
-J_max = len(d)
-
-I = range(I_max)
-J = range(J_max)
-
 # Initialisierung des Modells
 m = gp.Model()
 
 # Initialisierung der Variablen
-# Variante - Wiederholter Aufruf von model.addVar()
-x = {}
-for i in I:
-     for j in J:
-          x[i,j] = m.addVar(vtype=GRB.CONTINUOUS, name="x_"+str(i)+str(j))
-y = {}
-for i in I:
-     y[i] = m.addVar(vtype=GRB.BINARY, name="y_"+str(i))
-
-# Variante - Aufruf von model.addVars()
-#x = m.addVars(I_max, J_max, vtype=GRB.CONTINUOUS, name="x")
-
-#y = m.addVars(I_max, vtype=GRB.BINARY, name="y")
+xB = m.addVar(vtype=GRB.CONTINUOUS, ub=600, name="x_B")
+xK = m.addVar(vtype=GRB.CONTINUOUS, ub=200, name="x_K")
+xL = m.addVar(vtype=GRB.CONTINUOUS, ub=50, name="x_L")
+xT = m.addVar(vtype=GRB.CONTINUOUS, ub=150, name="x_T")
 
 # Definition der Zielfunktion
-m.setObjective(60000*y[0] + 60000*y[1] + 80000*y[2] 
-+ 270*x[0,0] + 170*x[0,1] + 400*x[0,2] + 450*x[0,3] + 300*x[0,4]
-+ 320*x[1,0] + 280*x[1,1] + 490*x[1,2] + 230*x[1,3] + 120*x[1,4]
-+ 120*x[2,0] + 390*x[2,1] + 240*x[2,2] + 230*x[2,3] + 370*x[2,4], GRB.MINIMIZE)
-# Mengenbasierte Schreibweise:
-# m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] for j in J for i in I), GRB.MINIMIZE)
+m.setObjective(4.5*xB + 3.5*xK + 2.3*xL + 3.2*xT, GRB.MAXIMIZE)
 
-# Hinzufügen der Nebenbedingungen
-m.addConstr(x[0,0] + x[1,0] + x[2,0] == 200, "meet_demand_0")
-m.addConstr(x[0,1] + x[1,1] + x[2,1] == 250, "meet_demand_1")
-m.addConstr(x[0,2] + x[1,2] + x[2,2] == 150, "meet_demand_2")
-m.addConstr(x[0,3] + x[1,3] + x[2,3] == 300, "meet_demand_3")
-m.addConstr(x[0,4] + x[1,4] + x[2,4] == 100, "meet_demand_4")
-
-m.addConstr(x[0,0] + x[0,1] + x[0,2] + x[0,3] + x[0,4] <= 400 * y[0], "meet_prod_0")
-m.addConstr(x[1,0] + x[1,1] + x[1,2] + x[1,3] + x[1,4] <= 350 * y[1], "meet_prod_1")
-m.addConstr(x[2,0] + x[2,1] + x[2,2] + x[2,3] + x[2,4] <= 600 * y[2], "meet_prod_2")
-
-# Mengenbasierte Schreibweise:
-# Variante - Wiederholter Aufruf von model.addConstr()
-#for j in J:
-#     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "meet_demand_0" + str(j))
-
-#for i in I:
-#     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "meet_prod_" + str(i))
-
-# Variante - Aufruf von model.addConstrs()
-# m.addConstrs((x.sum("*", j) == d[j] for j in J), name="nb")
-
-# m.addConstrs((x.sum(i, "*") == b[i] * y[i] for i in I), name="kb")
+# Hinzufügen von Nebenbedingungen
+m.addConstr(6*xB + 3*xK + 3*xL + 4*xT <= 3900,"nb_I")
+m.addConstr(2*xB + 2.5*xK + 2.5*xL + 3*xT <= 3900, "nb_II")
+m.addConstr(2.5*xB + 3*xK + 1.5*xL + 3*xT <= 3900, "nb_III")
 
 # Optimierung
 m.optimize()
@@ -72,10 +24,3 @@ m.optimize()
 # Ergebnisausgabe
 m.printAttr(GRB.Attr.ObjVal)
 m.printAttr(GRB.Attr.X)
-
-# 2d) Änderung des Modells:
-# for j in J:
-#      m.addConstr(gp.quicksum(x[i,j] for i in I) <= d[j], "nb_" + str(j))
-
-# g = 350
-# m.setObjective(gp.quicksum((g - c[i][j])*x[i,j] for j in J for i in I) - gp.quicksum(f[i]*y[i] for i in I), GRB.MAXIMIZE)

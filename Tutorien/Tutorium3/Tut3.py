@@ -1,46 +1,13 @@
 import gurobipy as gp
 from gurobipy import GRB
-import csv
 
-# Daten einlesen
-costPerKm = 0.75
-costperH = 45
-
-d=[]
-ao=[]
-with open("Absatzorte.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.DictReader(csv_file)
-     for row in csv_reader:
-          d.append(int(row["Bedarf"]))
-          ao.append(row["Ort"])
-
-b=[]
-f=[]
-so=[]
-with open("Standorte.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.DictReader(csv_file)
-     for row in csv_reader:
-          b.append(int(row["Kapazität"]))
-          f.append(int(row["Fixkosten"]))
-          so.append(row["Ort"])
-
-
-dur=[]
-with open("Dauer.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.reader(csv_file)
-     next(csv_reader)
-     for row in csv_reader:
-          rowAsInt = [int(item) for item in row[1:]]
-          dur.append(rowAsInt)
-
-dist=[]
-with open("Entfernung.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.reader(csv_file)
-     next(csv_reader)
-     for row in csv_reader:
-          rowAsInt = [int(item) for item in row[1:]]
-          dist.append(rowAsInt)
-
+# Parameter
+d = [200, 250, 150, 300, 100]
+b = [400, 350, 600]
+f = [60000, 60000, 80000]
+c = [[270, 170, 400, 450, 300],
+     [320, 290, 490, 230, 120],
+     [120, 390, 240, 230, 370]]
 
 # Mengen
 I_max = len(b)
@@ -49,31 +16,11 @@ J_max = len(d)
 I = range(I_max)
 J = range(J_max)
 
-
-# Kostenberechnung
-c = []
-for i in I:
-     newRow = []
-     for j in J:
-          newRow.append(costperH * dur[i][j] + costPerKm * dist[i][j])
-     c.append(newRow)
-
-# Kurzform:
-# c = [[costperH * dur[i][j] + costPerKm * dist[i][j] for j in J] for i in I]
-
-# Dict ist auch möglich, dann wird c mit c[i,j] indiziert anstelle von c[i][j] - Zielfunktion muss an Dict angepasst werden.
-#c = {(i,j) : costperH * dur[i][j] + costPerKm * dist[i][j] for i in I for j in J}
-
-# Ausgabe der Kosten
-for row in c:
-     print(row)
-
-
 # Initialisierung des Modells
 m = gp.Model()
 
-
 # Initialisierung der Variablen
+# Variante - Wiederholter Aufruf von model.addVar()
 x = {}
 for i in I:
      for j in J:
@@ -82,58 +29,53 @@ y = {}
 for i in I:
      y[i] = m.addVar(vtype=GRB.BINARY, name="y_"+str(i))
 
+# Variante - Aufruf von model.addVars()
 #x = m.addVars(I_max, J_max, vtype=GRB.CONTINUOUS, name="x")
+
 #y = m.addVars(I_max, vtype=GRB.BINARY, name="y")
 
-
 # Definition der Zielfunktion
-m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] for j in J for i in I), GRB.MINIMIZE)
+m.setObjective(60000*y[0] + 60000*y[1] + 80000*y[2] 
++ 270*x[0,0] + 170*x[0,1] + 400*x[0,2] + 450*x[0,3] + 300*x[0,4]
++ 320*x[1,0] + 280*x[1,1] + 490*x[1,2] + 230*x[1,3] + 120*x[1,4]
++ 120*x[2,0] + 390*x[2,1] + 240*x[2,2] + 230*x[2,3] + 370*x[2,4], GRB.MINIMIZE)
+# Mengenbasierte Schreibweise:
+# m.setObjective(gp.quicksum(f[i]*y[i] for i in I) + gp.quicksum(c[i][j]*x[i,j] for j in J for i in I), GRB.MINIMIZE)
 
 # Hinzufügen der Nebenbedingungen
-for j in J:
-     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "meet_demand_" + str(j))
+m.addConstr(x[0,0] + x[1,0] + x[2,0] == 200, "meet_demand_0")
+m.addConstr(x[0,1] + x[1,1] + x[2,1] == 250, "meet_demand_1")
+m.addConstr(x[0,2] + x[1,2] + x[2,2] == 150, "meet_demand_2")
+m.addConstr(x[0,3] + x[1,3] + x[2,3] == 300, "meet_demand_3")
+m.addConstr(x[0,4] + x[1,4] + x[2,4] == 100, "meet_demand_4")
 
-for i in I:
-     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "meet_prod_" + str(i))
+m.addConstr(x[0,0] + x[0,1] + x[0,2] + x[0,3] + x[0,4] <= 400 * y[0], "meet_prod_0")
+m.addConstr(x[1,0] + x[1,1] + x[1,2] + x[1,3] + x[1,4] <= 350 * y[1], "meet_prod_1")
+m.addConstr(x[2,0] + x[2,1] + x[2,2] + x[2,3] + x[2,4] <= 600 * y[2], "meet_prod_2")
 
+# Mengenbasierte Schreibweise:
+# Variante - Wiederholter Aufruf von model.addConstr()
+#for j in J:
+#     m.addConstr(gp.quicksum(x[i,j] for i in I) == d[j], "meet_demand_0" + str(j))
+
+#for i in I:
+#     m.addConstr(gp.quicksum(x[i,j] for j in J) <= b[i] * y[i], "meet_prod_" + str(i))
+
+# Variante - Aufruf von model.addConstrs()
 # m.addConstrs((x.sum("*", j) == d[j] for j in J), name="nb")
-# m.addConstrs((x.sum(i, "*") == b[i] * y[i] for i in I), name="kb")
 
+# m.addConstrs((x.sum(i, "*") == b[i] * y[i] for i in I), name="kb")
 
 # Optimierung
 m.optimize()
 
+# Ergebnisausgabe
+m.printAttr(GRB.Attr.ObjVal)
+m.printAttr(GRB.Attr.X)
 
-# Ergebnisausgabe:
-print("\nOptimale Standortwahl bei mehreren Betriebsstätten\n")
+# 2d) Änderung des Modells:
+# for j in J:
+#      m.addConstr(gp.quicksum(x[i,j] for i in I) <= d[j], "nb_" + str(j))
 
-print("Die gesamten Kosten des Transportes betragen", m.getAttr(GRB.Attr.ObjVal), "GE.")
-
-for i in I:
-     if y[i].X > 0:
-          print("In", so[i], "wird ein Standort errichtet.")
-          print("\tFixkosten:", f[i])
-          print("\tVariable Kosten:", sum([c[i][j] * x[i,j].X for j in J]))
-     else:
-          print("In", so[i], "wird KEIN Standort errichtet.")
-
-
-for i in I:
-     for j in J:
-          if x[i,j].X > 0:
-               print("Von", so[i], "werden", x[i,j].X, "ME nach", ao[j], "geliefert, die Transportkosten betragen dabei", c[i][j] * x[i,j].X, "GE.")
-
-with open("Ergebnisausgabe.txt", "w", encoding="utf-8") as file:
-     file.write("Optimale Standortwahl bei mehreren Betriebsstätten\n\n")
-     file.write("Die gesamten Kosten des Transportes betragen " + str(m.getAttr(GRB.Attr.ObjVal)) + " GE.\n")
-     for i in I:
-          if y[i].X > 0:
-               file.write("In " + so[i] + " wird ein Standort errichtet!\n")
-          else:
-               file.write("In " + so[i] + " wird KEIN Standort errichtet!\n")
-     file.write("\n")
-     for i in I:
-          for j in J:
-               if x[i,j].X > 0:
-                    file.write("Von " + so[i] + " werden " + str(x[i,j].X) + " ME nach " + ao[j] +
-                    " geliefert, die Transportkosten betragen dabei " + str(c[i][j] * x[i,j].X) + " GE.\n")
+# g = 350
+# m.setObjective(gp.quicksum((g - c[i][j])*x[i,j] for j in J for i in I) - gp.quicksum(f[i]*y[i] for i in I), GRB.MAXIMIZE)

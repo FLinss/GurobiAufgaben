@@ -3,43 +3,29 @@ from gurobipy import GRB
 import csv
 
 # Daten einlesen
-costPerKm = 0.75
-costperH = 45
+costPerKm = 2.5
 
 d=[]
 ao=[]
+posAo=[]
 with open("Absatzorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           d.append(int(row["Bedarf"]))
           ao.append(row["Ort"])
+          posAo.append({"X" : int(row["xKoordinate"]), "Y" : int(row["yKoordinate"])})
 
 b=[]
 f=[]
 so=[]
+posSo=[]
 with open("Standorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           b.append(int(row["Kapazität"]))
           f.append(int(row["Fixkosten"]))
           so.append(row["Ort"])
-
-
-dur=[]
-with open("Dauer.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.reader(csv_file)
-     next(csv_reader)
-     for row in csv_reader:
-          rowAsInt = [int(item) for item in row[1:]]
-          dur.append(rowAsInt)
-
-dist=[]
-with open("Entfernung.csv", encoding="utf-8") as csv_file:
-     csv_reader = csv.reader(csv_file)
-     next(csv_reader)
-     for row in csv_reader:
-          rowAsInt = [int(item) for item in row[1:]]
-          dist.append(rowAsInt)
+          posSo.append({"X" : int(row["xKoordinate"]), "Y" : int(row["yKoordinate"])})
 
 
 # Mengen
@@ -55,19 +41,16 @@ c = []
 for i in I:
      newRow = []
      for j in J:
-          newRow.append(costperH * dur[i][j] + costPerKm * dist[i][j])
+          distance = abs(posSo[i]["X"] - posAo[j]["X"]) + abs(posSo[i]["Y"] - posAo[j]["Y"])
+          newRow.append(costPerKm * distance)
      c.append(newRow)
 
 # Kurzform:
-# c = [[costperH * dur[i][j] + costPerKm * dist[i][j] for j in J] for i in I]
-
-# Dict ist auch möglich, dann wird c mit c[i,j] indiziert anstelle von c[i][j] - Zielfunktion muss an Dict angepasst werden.
-#c = {(i,j) : costperH * dur[i][j] + costPerKm * dist[i][j] for i in I for j in J}
+#c = [[costPerKm * (abs(posSo[i]["X"] - posAo[j]["X"]) + abs(posSo[i]["Y"] - posAo[j]["Y"])) for j in J] for i in I]
 
 # Ausgabe der Kosten
 for row in c:
      print(row)
-
 
 # Initialisierung des Modells
 m = gp.Model()
@@ -121,19 +104,8 @@ for i in I:
 for i in I:
      for j in J:
           if x[i,j].X > 0:
-               print("Von", so[i], "werden", x[i,j].X, "ME nach", ao[j], "geliefert, die Transportkosten betragen dabei", c[i][j] * x[i,j].X, "GE.")
+               print("Von", so[i], "werden", x[i,j].X, "ME\tnach", ao[j], "geliefert, die Transportkosten betragen dabei", c[i][j] * x[i,j].X, "GE.")
 
-with open("Ergebnisausgabe.txt", "w", encoding="utf-8") as file:
-     file.write("Optimale Standortwahl bei mehreren Betriebsstätten\n\n")
-     file.write("Die gesamten Kosten des Transportes betragen " + str(m.getAttr(GRB.Attr.ObjVal)) + " GE.\n")
-     for i in I:
-          if y[i].X > 0:
-               file.write("In " + so[i] + " wird ein Standort errichtet!\n")
-          else:
-               file.write("In " + so[i] + " wird KEIN Standort errichtet!\n")
-     file.write("\n")
-     for i in I:
-          for j in J:
-               if x[i,j].X > 0:
-                    file.write("Von " + so[i] + " werden " + str(x[i,j].X) + " ME nach " + ao[j] +
-                    " geliefert, die Transportkosten betragen dabei " + str(c[i][j] * x[i,j].X) + " GE.\n")
+for i in I:
+     constr = m.getConstrByName("meet_prod_" + str(i))
+     print("Nebenbedingung", constr.ConstrName, "hat einen Schlupf von", constr.Slack)

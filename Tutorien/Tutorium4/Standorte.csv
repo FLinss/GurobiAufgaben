@@ -1,5 +1,4 @@
-Ort,Kapazität,Fixkosten,xKoordinate,yKoordinate
-A,2211,88440,31,42
-B,425,17000,35,60
-C,850,34000,45,70
-D,1276,51040,60,100
+Ort,Kapazität,Fixkosten
+Dresden,400,60000
+Bremen,350,60000
+Düsseldorf,600,80000
