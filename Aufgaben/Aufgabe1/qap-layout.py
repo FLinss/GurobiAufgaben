@@ -103,13 +103,20 @@ m.printAttr('X')
 
 print("\nMaschinenzuordnung:\n")
 
+results = []
 for h in maschines:
+    newRow=[]
     for j in places:
+        newRow.append(round(x[h,j].X))
         if x[h,j].X > 0:
             # Extra: Konvertiere Index zu Bezeichnung:
             placeJ = chr(ord('A') + j)
             #Alternativ einfach j ausgeben.
             print("Maschine M{} wird Standort {} zugeordnet.".format(h, placeJ))
+    results.append(newRow)
+print("\n")
+for row in results:
+    print(row)
 
 print("\nMaterialfluss:\n")
 
