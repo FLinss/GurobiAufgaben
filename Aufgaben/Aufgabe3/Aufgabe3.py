@@ -58,7 +58,6 @@ m.printAttr(GRB.Attr.ObjVal)
 m.printAttr(GRB.Attr.X)
 
 m.write("model.lp")
-m.write("solution.sol")
 
 costs = {}
 yResults = {}
