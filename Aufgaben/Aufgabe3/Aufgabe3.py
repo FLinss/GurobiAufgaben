@@ -9,7 +9,7 @@ B = {}
 B["min"] = []
 B["mean"] = []
 B["max"] = []
-with open("Aufgaben/Aufgabe3/data.csv", encoding="utf-8") as csv_file:
+with open("Bedarfe.csv", encoding="utf-8") as csv_file:
     csv_reader = csv.DictReader(csv_file)
     for row in csv_reader:
         B["min"].append(int(row["min"]))
@@ -29,13 +29,13 @@ m = gp.Model()
 # Initialisierung der Variablen
 r = {}
 for t in T:
-    r[t] = m.addVar(vtype=GRB.INTEGER, lb=0, name="r_" + str(t))
+    r[t] = m.addVar(vtype=GRB.INTEGER, lb=0, name="r" + str(t))
 y = {}
 for t in T:
-    y[t] = m.addVar(vtype=GRB.BINARY, name="y_{}" + str(t))
+    y[t] = m.addVar(vtype=GRB.BINARY, name="y" + str(t))
 L = {}
 for t in range(T_max + 1):
-    L[t] = m.addVar(vtype=GRB.INTEGER, lb=0, name="L_{}" + str(t))
+    L[t] = m.addVar(vtype=GRB.INTEGER, lb=0, name="L" + str(t))
 
 # Definition der Zielfunktion
 m.setObjective(gp.quicksum(kB * y[t] + kL*L[t+1] for t in T), GRB.MINIMIZE)
@@ -57,8 +57,8 @@ m.optimize()
 m.printAttr(GRB.Attr.ObjVal)
 m.printAttr(GRB.Attr.X)
 
-m.write("test.lp")
-m.write("test.sol")
+m.write("model.lp")
+m.write("solution.sol")
 
 costs = {}
 yResults = {}
