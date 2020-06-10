@@ -12,6 +12,17 @@ class Solver(enum.Enum):
 #    piece_cp = 2 currently not implemented
     variant_cp = 3
 
+def select_pieces(selected_pieces):
+    piece_id = 0
+    pieces = []
+    for piece in input_data.all_pieces:
+        if piece.name in selected_pieces:
+            piece.id = piece_id
+            piece_id += 1
+            piece.create_new_variants(enable_rotation, enable_reflection, rotation_angles)
+            pieces.append(piece)
+    return pieces
+
 def print_board(pieces, board_width, board_height):
     plt.figure()
     axes = plt.gca()
@@ -26,18 +37,7 @@ def print_board(pieces, board_width, board_height):
                                             facecolor = piece.color))
     plt.show()
 
-def select_pieces(selected_pieces):
-    piece_id = 0
-    pieces = []
-    for piece in input_data.all_pieces:
-        if piece.name in selected_pieces:
-            piece.id = piece_id
-            piece_id += 1
-            piece.create_new_variants(enable_rotation, enable_reflection, rotation_angles)
-            pieces.append(piece)
-    return pieces
-
-selected_pieces = [i for i in range(1,7)] # 1 to 12
+selected_pieces = [i for i in range(6,12)] # 1 to 12
 
 enable_rotation = True 
 enable_reflection = True
@@ -51,7 +51,7 @@ time_limit = 3600
 
 pieces = select_pieces(selected_pieces)
 
-solver = Solver.piece_mip
+solver = Solver.variant_cp
 if solver == Solver.variant_cp:
     model = vcp.Model()
 elif solver == Solver.piece_mip:
