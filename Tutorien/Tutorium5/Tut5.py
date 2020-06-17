@@ -108,4 +108,4 @@ for i in I:
 
 for i in I:
      constr = m.getConstrByName("meet_prod_" + str(i))
-     print("Nebenbedingung", constr.ConstrName, "hat einen Schlupf von", constr.Slack)
+     print("Nebenbedingung", constr.getAttr(GRB.Attr.ConstrName), "hat einen Schlupf von", constr.getAttr(GRB.Attr.Slack))
