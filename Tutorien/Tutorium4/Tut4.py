@@ -1,6 +1,7 @@
 import gurobipy as gp
 from gurobipy import GRB
 import csv
+import os
 
 # Daten einlesen
 costPerKm = 0.75
@@ -8,7 +9,8 @@ costperH = 45
 
 d=[]
 ao=[]
-with open("Absatzorte.csv", encoding="utf-8") as csv_file:
+print(os.getcwd())
+with open("Tutorien/Tutorium4/Absatzorte.csv", encoding="utf-8") as csv_file:
      csv_reader = csv.DictReader(csv_file)
      for row in csv_reader:
           d.append(int(row["Bedarf"]))
